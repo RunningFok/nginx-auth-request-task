@@ -1,0 +1,9 @@
+http:
+  middlewares:
+    auth-forward:
+      forwardAuth:
+        address: http://auth:5000/auth
+        authResponseHeaders:
+          - "x-pretest"
+        authRequestHeaders:
+          - "x-pretest"
