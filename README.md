@@ -1,43 +1,30 @@
-# Nginx Auth Request Demo
+# Traefik Auth Request Demo
 
-This project demonstrates how to use Nginx's `auth_request` module to authenticate requests based on HTTP headers.
+A demonstration of request authentication using Traefik's ForwardAuth middleware with a Flask-based auth service.
 
-## Architecture
+## Overview
 
-The setup consists of three services:
-
-2. **Auth**: A Flask service that validates the `x-pretest` header.
-3. **Nginx**: Acts as a gateway, using `auth_request` to validate incoming requests.
-
-## How it works
-
-1. The client sends requests to Nginx with or without the `x-pretest` header
-2. Nginx forwards the authentication headers to the auth service
-3. The auth service checks if the `x-pretest` header contains a valid token
-4. If authentication succeeds, Nginx processes the request; otherwise, it returns a 401 error
-
-## Valid Authentication
-
-A valid request must include the header: `x-pretest: valid-token`
-
-## Running the Demo
-
-```bash
-docker compose up --build
-```
+This project shows how to implement authentication at the gateway level using:
+- **Traefik** as the reverse proxy with ForwardAuth middleware
+- **Flask** service for authentication validation
+- **File provider** with YAML configuration (matching Kubernetes cluster setup)
 
 ## Testing
 
-You can test manually:
+See [TESTING.md](TESTING.md) for testing steps and test cases.
 
-```bash
-# Valid request
-curl -v -H "x-pretest: valid-token" http://localhost:8080/health
-curl -v -H "x-pretest: valid-token" http://localhost:8080/404
+## Project Structure
 
-# Invalid request
-curl -v -H "x-pretest: wrong-token" http://localhost:8080/health
-
-# Missing header
-curl http://localhost:8080
-``` 
+```
+.
+├── auth/             # Flask auth service
+│   ├── auth.py       # Authentication logic
+│   └── Dockerfile    # Auth service container
+├── traefik/          # Traefik configuration
+│   ├── traefik.yml   # Main Traefik config
+│   └── dynamic/      # Dynamic configuration
+│       ├── auth-middleware.yml
+│       └── ingressroute.yml
+├── docker-compose.yml
+└── README.md
+```
